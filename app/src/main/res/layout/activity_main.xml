@@ -6,11 +6,10 @@
     android:layout_height="match_parent"
     tools:context="com.example.android.popularmovies.MainActivity">
 
-    <ImageView
-        android:id="@+id/iv_image"
-        android:scaleType="centerCrop"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_movies"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"/>
 
     <TextView
         android:id="@+id/tv_error_message"

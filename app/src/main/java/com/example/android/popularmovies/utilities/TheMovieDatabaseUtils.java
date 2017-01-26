@@ -25,6 +25,10 @@ public class TheMovieDatabaseUtils {
     private static final String STATIC_PATH_TOP_RATED = "top_rated";
     private static final String APIKEY_PARAM = "api_key";
 
+    private static final String STATIC_IMAGE_URL = "http://image.tmdb.org/t/p/";
+    private static final String STATIC_IMAGE_PATH_SIZE = "w185";
+
+
     public enum SortType {
         POPULAR, TOP_RATED
     }
@@ -51,6 +55,26 @@ public class TheMovieDatabaseUtils {
 
         return url;
     }
+
+    public static URL buildImageUrl(String imagePath) {
+        Uri.Builder builder = Uri.parse(STATIC_IMAGE_URL).buildUpon();
+        builder.appendPath(STATIC_IMAGE_PATH_SIZE);
+        imagePath = imagePath.replace("/", "");
+        builder.appendPath(imagePath);
+
+        Uri builtUri = builder.build();
+        URL url = null;
+        try {
+            url = new URL(builtUri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        Log.v(TAG, "Built URI " + url);
+
+        return url;
+    }
+
 
     public static String getResponseFromHttpUrl(URL url) throws IOException {
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
