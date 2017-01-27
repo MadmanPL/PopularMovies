@@ -7,6 +7,9 @@ import android.os.Bundle;
 import android.support.v7.view.menu.ActionMenuItemView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -53,14 +56,53 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         Context context = this;
         m_moviesAdapter = new MoviesAdapter(this, context);
 
-        /* Setting the adapter attaches it to the RecyclerView in our layout. */
         m_rvMovies.setAdapter(m_moviesAdapter);
-
-        //Context context = this;
-        //Picasso.with(context).load("http://i.imgur.com/DvpvklR.png").into(m_ivImage);
 
         new FetchMoviesTask().execute(TheMovieDatabaseUtils.SortType.POPULAR);
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_activity_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_sort_popular) {
+            m_moviesAdapter.setMoviesData(null);
+            loadMoviesData(TheMovieDatabaseUtils.SortType.POPULAR);
+            return true;
+        }
+        else if (id == R.id.action_sort_top_rated) {
+            m_moviesAdapter.setMoviesData(null);
+            loadMoviesData(TheMovieDatabaseUtils.SortType.TOP_RATED);
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void loadMoviesData(TheMovieDatabaseUtils.SortType sortType) {
+        showMoviesDataView();
+
+        new FetchMoviesTask().execute(sortType);
+    }
+
+    private void showMoviesDataView() {
+        m_tvErrorMessage.setVisibility(View.INVISIBLE);
+        m_rvMovies.setVisibility(View.VISIBLE);
+    }
+
+    private void showErrorMessage() {
+        m_rvMovies.setVisibility(View.INVISIBLE);
+        m_tvErrorMessage.setVisibility(View.VISIBLE);
+    }
+
+
 
     @Override
     public void onClick(Movie movie) {
@@ -105,10 +147,10 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         protected void onPostExecute(Movie[] moviesData) {
             m_bpLoadingIndicator.setVisibility(View.INVISIBLE);
             if (moviesData != null) {
-                //showMovieDataView();
+                showMoviesDataView();
                 m_moviesAdapter.setMoviesData(moviesData);
             } else {
-                //showErrorMessage();
+                showErrorMessage();
             }
         }
     }
