@@ -25,6 +25,9 @@ public final class TheMovieDatabaseJsonUtils {
         final String OWM_POSTER_PATH = "poster_path";
         final String OWM_TITLE = "title";
         final String OWM_ORIGINAL_TITLE = "original_title";
+        final String OWM_OVERVIEW = "overview";
+        final String OWM_VOTE_AVERAGE = "vote_average";
+        final String OWM_RELEASE_DATE = "release_date";
 
         Movie[] parsedMovieData = null;
 
@@ -43,6 +46,9 @@ public final class TheMovieDatabaseJsonUtils {
             movie.PosterPath = movieJson.getString(OWM_POSTER_PATH);
             movie.Title = movieJson.getString(OWM_TITLE);
             movie.OrginalTitle = movieJson.getString(OWM_ORIGINAL_TITLE);
+            movie.Overview = movieJson.getString(OWM_OVERVIEW);
+            movie.VoteAverage = movieJson.getDouble(OWM_VOTE_AVERAGE);
+            movie.ReleaseDate = movieJson.getString(OWM_RELEASE_DATE);
 
             parsedMovieData[i] = movie;
         }

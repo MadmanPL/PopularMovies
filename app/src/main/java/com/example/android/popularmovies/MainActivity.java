@@ -1,6 +1,7 @@
 package com.example.android.popularmovies;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.android.popularmovies.extras.Extras;
 import com.example.android.popularmovies.model.Movie;
 import com.example.android.popularmovies.utilities.TheMovieDatabaseJsonUtils;
 import com.example.android.popularmovies.utilities.TheMovieDatabaseUtils;
@@ -106,6 +108,18 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
     @Override
     public void onClick(Movie movie) {
+        Context context = this;
+        Class destinationClass = MovieDetailActivity.class;
+        Intent intentToStartDetailActivity = new Intent(context, destinationClass);
+        intentToStartDetailActivity.putExtra(Extras.MOVIE_ORIGINAL_TITLE, movie.OrginalTitle);
+        intentToStartDetailActivity.putExtra(Extras.MOVIE_ID, movie.Id);
+        intentToStartDetailActivity.putExtra(Extras.MOVIE_POSTER_PATH, movie.PosterPath);
+        intentToStartDetailActivity.putExtra(Extras.MOVIE_TITLE, movie.Title);
+        intentToStartDetailActivity.putExtra(Extras.MOVIE_OVERVIEW, movie.Overview);
+        intentToStartDetailActivity.putExtra(Extras.MOVIE_RELEASE_DATE, movie.ReleaseDate);
+        intentToStartDetailActivity.putExtra(Extras.MOVIE_VOTE_AVERAGE, movie.VoteAverage);
+
+        startActivity(intentToStartDetailActivity);
 
     }
 
@@ -119,8 +133,6 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
         @Override
         protected Movie[] doInBackground(TheMovieDatabaseUtils.SortType... params) {
-
-            /* If there's no zip code, there's nothing to look up. */
             if (params.length == 0) {
                 return null;
             }
