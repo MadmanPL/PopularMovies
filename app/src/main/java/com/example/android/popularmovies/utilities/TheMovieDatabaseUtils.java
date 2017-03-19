@@ -23,6 +23,8 @@ public class TheMovieDatabaseUtils {
     private static final String STATIC_PATH_MOVIE = "movie";
     private static final String STATIC_PATH_POPULAR = "popular";
     private static final String STATIC_PATH_TOP_RATED = "top_rated";
+    private static final String STATIC_PATH_VIDEOS = "videos";
+    private static final String STATIC_PATH_REVIEWS = "reviews";
     private static final String APIKEY_PARAM = "api_key";
 
     private static final String STATIC_IMAGE_URL = "http://image.tmdb.org/t/p/";
@@ -41,6 +43,48 @@ public class TheMovieDatabaseUtils {
         } else {
             builder.appendPath(STATIC_PATH_TOP_RATED);
         }
+        builder.appendQueryParameter(APIKEY_PARAM, TheMovieDBApiKey.GetApiKey());
+
+        Uri builtUri = builder.build();
+        URL url = null;
+        try {
+            url = new URL(builtUri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        Log.v(TAG, "Built URI " + url);
+
+        return url;
+    }
+
+    public static URL buildVideosUrl(int movieId) {
+        Uri.Builder builder = Uri.parse(STATIC_URL).buildUpon();
+        builder.appendPath(STATIC_PATH_MOVIE);
+        builder.appendPath(String.valueOf(movieId));
+        builder.appendPath(STATIC_PATH_VIDEOS);
+
+        builder.appendQueryParameter(APIKEY_PARAM, TheMovieDBApiKey.GetApiKey());
+
+        Uri builtUri = builder.build();
+        URL url = null;
+        try {
+            url = new URL(builtUri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        Log.v(TAG, "Built URI " + url);
+
+        return url;
+    }
+
+    public static URL buildReviewsUrl(int movieId) {
+        Uri.Builder builder = Uri.parse(STATIC_URL).buildUpon();
+        builder.appendPath(STATIC_PATH_MOVIE);
+        builder.appendPath(String.valueOf(movieId));
+        builder.appendPath(STATIC_PATH_REVIEWS);
+
         builder.appendQueryParameter(APIKEY_PARAM, TheMovieDBApiKey.GetApiKey());
 
         Uri builtUri = builder.build();
