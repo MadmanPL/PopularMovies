@@ -1,8 +1,10 @@
 package com.example.android.popularmovies;
 
 import android.content.ActivityNotFoundException;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.android.popularmovies.data.MovieContract;
 import com.example.android.popularmovies.extras.Extras;
 import com.example.android.popularmovies.model.Movie;
 import com.example.android.popularmovies.model.Review;
@@ -28,6 +31,7 @@ public class MovieDetailActivity extends AppCompatActivity
         implements VideosAdapter.VideosAdapterOnClickHandler, ReviewsAdapter.ReviewsAdapterOnClickHandler {
 
     private ImageView m_ivPoster;
+    private ImageView m_ivFav;
     private TextView m_tvTitleAndYear;
     private ProgressBar m_pbUserScore;
     private TextView m_tvOverview;
@@ -42,12 +46,20 @@ public class MovieDetailActivity extends AppCompatActivity
     private TextView m_tvReviewsErrorMessage;
     private ProgressBar m_bpReviewsLoadingIndicator;
 
+    private String m_sMovieTitle = "";
+    private String m_sMovieOriginalTitle = "";
+    private String m_sMovieReleaseDate = "";
+    private Integer m_iMovieExternalId = 0;
+
+    private boolean m_bIsFavourite = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_detail);
 
         m_ivPoster= (ImageView) findViewById(R.id.iv_poster);
+        m_ivFav= (ImageView) findViewById(R.id.iv_fav);
         m_tvTitleAndYear= (TextView) findViewById(R.id.tv_title_and_year);
         m_pbUserScore= (ProgressBar) findViewById(R.id.pb_user_score);
         m_tvOverview= (TextView) findViewById(R.id.tv_overview);
@@ -63,19 +75,23 @@ public class MovieDetailActivity extends AppCompatActivity
         Intent intentThatStartedThisActivity = getIntent();
 
         if (intentThatStartedThisActivity != null) {
-            String sMovieTitle = "";
-            String sMovieReleaseDate = "";
             if (intentThatStartedThisActivity.hasExtra(Extras.MOVIE_TITLE)) {
-                sMovieTitle = intentThatStartedThisActivity.getStringExtra(Extras.MOVIE_TITLE);
+                m_sMovieTitle = intentThatStartedThisActivity.getStringExtra(Extras.MOVIE_TITLE);
+            }
+            if (intentThatStartedThisActivity.hasExtra(Extras.MOVIE_ORIGINAL_TITLE)) {
+                m_sMovieOriginalTitle = intentThatStartedThisActivity.getStringExtra(Extras.MOVIE_ORIGINAL_TITLE);
             }
             if (intentThatStartedThisActivity.hasExtra(Extras.MOVIE_RELEASE_DATE)) {
-                sMovieReleaseDate = intentThatStartedThisActivity.getStringExtra(Extras.MOVIE_RELEASE_DATE);
+                m_sMovieReleaseDate = intentThatStartedThisActivity.getStringExtra(Extras.MOVIE_RELEASE_DATE);
+            }
+            if (intentThatStartedThisActivity.hasExtra(Extras.MOVIE_ID)) {
+                m_iMovieExternalId = intentThatStartedThisActivity.getIntExtra(Extras.MOVIE_ID, 0);
             }
 
-            if (sMovieReleaseDate.length() >= 4) {
-                m_tvTitleAndYear.setText(sMovieTitle + " (" + sMovieReleaseDate.substring(0, 4) + ")");
+            if (m_sMovieReleaseDate.length() >= 4) {
+                m_tvTitleAndYear.setText(m_sMovieTitle + " (" + m_sMovieReleaseDate.substring(0, 4) + ")");
             } else {
-                m_tvTitleAndYear.setText(sMovieTitle);
+                m_tvTitleAndYear.setText(m_sMovieTitle);
             }
 
             String sMovieOverview = "";
@@ -114,6 +130,14 @@ public class MovieDetailActivity extends AppCompatActivity
 
             m_reviewsAdapter = new ReviewsAdapter(this, this);
             m_rvReviews.setAdapter(m_reviewsAdapter);
+
+            if (isFavourite()) {
+                m_bIsFavourite = true;
+                m_ivFav.setImageResource(R.drawable.fav);
+            } else {
+                m_bIsFavourite = false;
+                m_ivFav.setImageResource(R.drawable.nofav);
+            }
 
             Integer iMovieId = 0;
             if (intentThatStartedThisActivity.hasExtra(Extras.MOVIE_ID)) {
@@ -158,6 +182,47 @@ public class MovieDetailActivity extends AppCompatActivity
     @Override
     public void onClick(Review review) {
 
+    }
+
+    private Boolean isFavourite() {
+        String[] projectionColumns = {MovieContract.MovieEntry._ID};
+        String selectionStatement = MovieContract.MovieEntry
+                .getSqlSelectByExternalId(m_iMovieExternalId);
+
+        Cursor cursor = getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI, projectionColumns, selectionStatement, null, null);
+
+        Boolean result = false;
+        if (null != cursor && cursor.getCount() > 0) {
+            result = true;
+        }
+
+        cursor.close();
+
+        return result;
+    }
+
+    public void favButtonClick(View view) {
+        if (m_bIsFavourite) {
+            String[] selectionArgs=new String[]{String.valueOf(m_iMovieExternalId)};
+            String selection=""+MovieContract.MovieEntry.COLUMN_EXTERNAL_ID+"=?";
+
+            getContentResolver().delete(MovieContract.MovieEntry.CONTENT_URI, selection, selectionArgs);
+
+            m_bIsFavourite = false;
+            m_ivFav.setImageResource(R.drawable.nofav);
+        } else {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(MovieContract.MovieEntry.COLUMN_TITLE, m_sMovieTitle);
+            contentValues.put(MovieContract.MovieEntry.COLUMN_ORGINAL_TITLE, m_sMovieOriginalTitle);
+            contentValues.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, m_sMovieReleaseDate);
+            contentValues.put(MovieContract.MovieEntry.COLUMN_EXTERNAL_ID, m_iMovieExternalId);
+            Uri uri = getContentResolver().insert(MovieContract.MovieEntry.CONTENT_URI, contentValues);
+
+            m_bIsFavourite = true;
+            m_ivFav.setImageResource(R.drawable.fav);
+        }
+
+        //change button image
     }
 
     public class FetchVideosTask extends AsyncTask<Integer, Void, Video[]> {
