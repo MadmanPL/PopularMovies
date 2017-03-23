@@ -32,7 +32,7 @@ public class TheMovieDatabaseUtils {
 
 
     public enum SortType {
-        POPULAR, TOP_RATED
+        POPULAR, TOP_RATED, FAVORITE
     }
 
     public static URL buildUrl(SortType sortType) {

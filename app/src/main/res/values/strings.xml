@@ -5,4 +5,5 @@
     <string name="action_sort_popular">Popular movies</string>
     <string name="action_sort_top_rated">Top rated movies</string>
     <string name="label_user_score">User score:</string>
+    <string name="action_sort_favorites">Favorite movies</string>
 </resources>

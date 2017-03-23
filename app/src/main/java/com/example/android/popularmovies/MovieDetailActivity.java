@@ -49,7 +49,11 @@ public class MovieDetailActivity extends AppCompatActivity
     private String m_sMovieTitle = "";
     private String m_sMovieOriginalTitle = "";
     private String m_sMovieReleaseDate = "";
+    private String m_sMoviePosterPath = "";
     private Integer m_iMovieExternalId = 0;
+    private String m_sMovieOverview = "";
+    private Double m_dMovieVoteAverage = 0.0;
+
 
     private boolean m_bIsFavourite = false;
 
@@ -88,6 +92,13 @@ public class MovieDetailActivity extends AppCompatActivity
                 m_iMovieExternalId = intentThatStartedThisActivity.getIntExtra(Extras.MOVIE_ID, 0);
             }
 
+            if (intentThatStartedThisActivity.hasExtra(Extras.MOVIE_OVERVIEW)) {
+                m_sMovieOverview = intentThatStartedThisActivity.getStringExtra(Extras.MOVIE_OVERVIEW);
+            }
+            if (intentThatStartedThisActivity.hasExtra(Extras.MOVIE_VOTE_AVERAGE)) {
+                m_dMovieVoteAverage = intentThatStartedThisActivity.getDoubleExtra(Extras.MOVIE_VOTE_AVERAGE, 0.0);
+            }
+
             if (m_sMovieReleaseDate.length() >= 4) {
                 m_tvTitleAndYear.setText(m_sMovieTitle + " (" + m_sMovieReleaseDate.substring(0, 4) + ")");
             } else {
@@ -108,13 +119,12 @@ public class MovieDetailActivity extends AppCompatActivity
             int iMovieVoteAverage = (int)Math.round(dMovieVoteAverage);
             m_pbUserScore.setProgress(iMovieVoteAverage);
 
-            String sMoviePosterPath = "";
             if (intentThatStartedThisActivity.hasExtra(Extras.MOVIE_POSTER_PATH)) {
-                sMoviePosterPath = intentThatStartedThisActivity.getStringExtra(Extras.MOVIE_POSTER_PATH);
+                m_sMoviePosterPath = intentThatStartedThisActivity.getStringExtra(Extras.MOVIE_POSTER_PATH);
             }
 
             Context context = this;
-            URL imageUrl = TheMovieDatabaseUtils.buildImageUrl(sMoviePosterPath);
+            URL imageUrl = TheMovieDatabaseUtils.buildImageUrl(m_sMoviePosterPath);
             Picasso.with(context).load(imageUrl.toString()).into(m_ivPoster);
 
             LinearLayoutManager videosLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -216,6 +226,9 @@ public class MovieDetailActivity extends AppCompatActivity
             contentValues.put(MovieContract.MovieEntry.COLUMN_ORGINAL_TITLE, m_sMovieOriginalTitle);
             contentValues.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, m_sMovieReleaseDate);
             contentValues.put(MovieContract.MovieEntry.COLUMN_EXTERNAL_ID, m_iMovieExternalId);
+            contentValues.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH, m_sMoviePosterPath);
+            contentValues.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, m_dMovieVoteAverage);
+            contentValues.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, m_sMovieOverview);
             Uri uri = getContentResolver().insert(MovieContract.MovieEntry.CONTENT_URI, contentValues);
 
             m_bIsFavourite = true;

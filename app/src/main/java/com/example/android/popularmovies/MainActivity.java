@@ -2,6 +2,7 @@ package com.example.android.popularmovies;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,13 +17,16 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.android.popularmovies.data.MovieContract;
 import com.example.android.popularmovies.extras.Extras;
 import com.example.android.popularmovies.model.Movie;
+import com.example.android.popularmovies.model.Video;
 import com.example.android.popularmovies.utilities.TheMovieDatabaseJsonUtils;
 import com.example.android.popularmovies.utilities.TheMovieDatabaseUtils;
 import com.squareup.picasso.Picasso;
 
 import java.net.URL;
+import java.util.Vector;
 
 public class MainActivity extends AppCompatActivity implements MoviesAdapter.MoviesAdapterOnClickHandler {
 
@@ -83,6 +87,10 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
             m_moviesAdapter.setMoviesData(null);
             loadMoviesData(TheMovieDatabaseUtils.SortType.TOP_RATED);
             return true;
+        } else if (id == R.id.action_sort_favorites) {
+            m_moviesAdapter.setMoviesData(null);
+            loadMoviesData(TheMovieDatabaseUtils.SortType.FAVORITE);
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -138,20 +146,70 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
             }
 
             TheMovieDatabaseUtils.SortType sortType = params[0];
-            URL moviesRequestUrl = TheMovieDatabaseUtils.buildUrl(sortType);
+            if (sortType == TheMovieDatabaseUtils.SortType.FAVORITE) {
+                Cursor cursor = getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI, null, null, null, null);
 
-            try {
-                String jsonMoviesResponse = TheMovieDatabaseUtils
-                        .getResponseFromHttpUrl(moviesRequestUrl);
+                Vector movieList = new Vector();
+                if (null != cursor && cursor.getCount() > 0) {
+                    cursor.moveToFirst();
+                    int externalIdIndex = cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_EXTERNAL_ID);
+                    int posterPathIndex = cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_POSTER_PATH);
+                    int titleIndex = cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_TITLE);
+                    int orginalTitleIndex = cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_ORGINAL_TITLE);
+                    int releaseDateIndex = cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_RELEASE_DATE);
+                    int voteAverageIndex = cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE);
+                    int overviewIndex = cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_OVERVIEW);
 
-                Movie[] simpleJsonMovieData = TheMovieDatabaseJsonUtils
-                        .getMoviesFromJson(MainActivity.this, jsonMoviesResponse);
+                    for (int i =0; i<cursor.getCount();i++) {
+                        Movie m = new Movie();
+                        m.Id = cursor.getInt(externalIdIndex);
+                        if (!cursor.isNull(posterPathIndex)) {
+                            m.PosterPath = cursor.getString(posterPathIndex);
+                        }
+                        if (!cursor.isNull(orginalTitleIndex)) {
+                            m.OrginalTitle = cursor.getString(orginalTitleIndex);
+                        }
+                        if (!cursor.isNull(releaseDateIndex)) {
+                            m.ReleaseDate = cursor.getString(releaseDateIndex);
+                        }
+                        if (!cursor.isNull(voteAverageIndex)) {
+                            m.VoteAverage = cursor.getDouble(voteAverageIndex);
+                        }
+                        if (!cursor.isNull(overviewIndex)) {
+                            m.Overview = cursor.getString(overviewIndex);
+                        }
+                        if (!cursor.isNull(titleIndex)) {
+                            m.Title = cursor.getString(titleIndex);
+                        }
+                        movieList.add(m);
 
-                return simpleJsonMovieData;
+                        cursor.moveToNext();
+                    }
+                }
 
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
+                cursor.close();
+
+                Movie[] result = new Movie[movieList.size()];
+                movieList.copyInto(result);
+
+                return result;
+
+            } else {
+                URL moviesRequestUrl = TheMovieDatabaseUtils.buildUrl(sortType);
+
+                try {
+                    String jsonMoviesResponse = TheMovieDatabaseUtils
+                            .getResponseFromHttpUrl(moviesRequestUrl);
+
+                    Movie[] simpleJsonMovieData = TheMovieDatabaseJsonUtils
+                            .getMoviesFromJson(MainActivity.this, jsonMoviesResponse);
+
+                    return simpleJsonMovieData;
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return null;
+                }
             }
         }
 
