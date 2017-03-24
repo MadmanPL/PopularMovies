@@ -2,4 +2,16 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="details_view_title_year">32sp</dimen>
+    <dimen name="overview_text_size">12sp</dimen>
+    <dimen name="user_score_text_size">12sp</dimen>
+    <dimen name="fav_button_height">40dp</dimen>
+    <dimen name="fav_button_width">0dp</dimen>
+    <dimen name="user_score_height">10dp</dimen>
+    <dimen name="movie_detail_top_elements_height">150dp</dimen>
+    <dimen name="reviews_left_margin">8dp</dimen>
+    <dimen name="trailers_left_margin">8dp</dimen>
+    <dimen name="trailer_play_width">32dp</dimen>
+    <dimen name="trailer_play_height">32dp</dimen>
+    <dimen name="trailer_item_height">36dp</dimen>
 </resources>

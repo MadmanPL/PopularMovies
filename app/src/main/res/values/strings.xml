@@ -6,4 +6,6 @@
     <string name="action_sort_top_rated">Top rated movies</string>
     <string name="label_user_score">User score:</string>
     <string name="action_sort_favorites">Favorite movies</string>
+    <string name="tools_movie_year">Movie (YEAR)</string>
+    <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse et lacus sagittis, lobortis nisl id, vehicula urna. Donec tempor, urna sit amet molestie pharetra, felis metus finibus elit, non dignissim ex turpis id risus. Aliquam rhoncus finibus nisi. Phasellus at enim vitae felis ultricies ornare. Morbi sit amet orci vel lectus malesuada finibus. Aenean id varius odio. Praesent vel tristique mi. Duis placerat sapien sit amet odio suscipit rutrum.</string>
 </resources>

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
+import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.view.menu.ActionMenuItemView;
@@ -31,6 +32,10 @@ import java.util.Vector;
 public class MainActivity extends AppCompatActivity implements MoviesAdapter.MoviesAdapterOnClickHandler {
 
     private static final String TAG = MainActivity.class.getSimpleName();
+
+    private static final String SORT_TYPE = "SORT_TYPE";
+    private String m_sSortType = "POPULAR";
+
 
     private RecyclerView m_rvMovies;
     private MoviesAdapter m_moviesAdapter;
@@ -64,8 +69,26 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
         m_rvMovies.setAdapter(m_moviesAdapter);
 
-        new FetchMoviesTask().execute(TheMovieDatabaseUtils.SortType.POPULAR);
+        m_sSortType = "POPULAR";
+        if (savedInstanceState != null) {
+            m_sSortType = savedInstanceState.getString(SORT_TYPE);
+        }
+        if (m_sSortType == "POPULAR") {
+            loadMoviesData(TheMovieDatabaseUtils.SortType.POPULAR);
+        } else if (m_sSortType == "TOP_RATED") {
+            loadMoviesData(TheMovieDatabaseUtils.SortType.TOP_RATED);
+        } else {
+            loadMoviesData(TheMovieDatabaseUtils.SortType.FAVORITE);
+        }
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle state) {
+        state.putString(SORT_TYPE, m_sSortType);
+
+        super.onSaveInstanceState(state);
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -81,15 +104,18 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         if (id == R.id.action_sort_popular) {
             m_moviesAdapter.setMoviesData(null);
             loadMoviesData(TheMovieDatabaseUtils.SortType.POPULAR);
+            m_sSortType = "POPULAR";
             return true;
         }
         else if (id == R.id.action_sort_top_rated) {
             m_moviesAdapter.setMoviesData(null);
             loadMoviesData(TheMovieDatabaseUtils.SortType.TOP_RATED);
+            m_sSortType = "TOP_RATED";
             return true;
         } else if (id == R.id.action_sort_favorites) {
             m_moviesAdapter.setMoviesData(null);
             loadMoviesData(TheMovieDatabaseUtils.SortType.FAVORITE);
+            m_sSortType = "FAVORITE";
             return true;
         }
 

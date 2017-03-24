@@ -19,7 +19,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="150dp"
+            android:layout_height="@dimen/movie_detail_top_elements_height"
             android:orientation="horizontal">
             <ImageView
                 android:id="@+id/iv_poster"
@@ -28,8 +28,8 @@
                 android:layout_weight="1" />
             <ImageButton
                 android:id="@+id/iv_fav"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
+                android:layout_width="@dimen/fav_button_width"
+                android:layout_height="@dimen/fav_button_height"
                 android:src="@drawable/nofav"
                 android:scaleType="fitCenter"
                 android:background="@android:color/transparent"
@@ -47,28 +47,28 @@
                 android:id="@+id/tv_title_and_year"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:text="Movie (YEAR)"
-                android:textSize="32sp"
+                tools:text="@string/tools_movie_year"
+                android:textSize="@dimen/details_view_title_year"
                 />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/label_user_score"
-                android:textSize="12sp"/>
+                android:textSize="@dimen/user_score_text_size"/>
 
             <ProgressBar
                 android:id="@+id/pb_user_score"
                 style="@android:style/Widget.ProgressBar.Horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="10dp" />
+                android:layout_height="@dimen/user_score_height" />
 
             <TextView
                 android:id="@+id/tv_overview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse et lacus sagittis, lobortis nisl id, vehicula urna. Donec tempor, urna sit amet molestie pharetra, felis metus finibus elit, non dignissim ex turpis id risus. Aliquam rhoncus finibus nisi. Phasellus at enim vitae felis ultricies ornare. Morbi sit amet orci vel lectus malesuada finibus. Aenean id varius odio. Praesent vel tristique mi. Duis placerat sapien sit amet odio suscipit rutrum."
-                android:textSize="12sp"/>
+                tools:text="@string/lorem_ipsum"
+                android:textSize="@dimen/overview_text_size"/>
 
 
 
@@ -92,19 +92,12 @@
 
             <TextView
                 android:id="@+id/tv_videos_error_message"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="16dp"
                 android:text="@string/error_message"
-                android:textSize="20sp"
-                android:visibility="invisible" />
+                style="@style/error_message_style" />
 
             <ProgressBar
                 android:id="@+id/pb_videos_loading_indicator"
-                android:layout_height="42dp"
-                android:layout_width="42dp"
-                android:layout_gravity="center"
-                android:visibility="invisible" />
+                style="@style/progress_bar_style" />
         </FrameLayout>
 
         <TextView
@@ -125,19 +118,12 @@
 
             <TextView
                 android:id="@+id/tv_reviews_error_message"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="16dp"
                 android:text="@string/error_message"
-                android:textSize="20sp"
-                android:visibility="invisible" />
+                style="@style/error_message_style" />
 
             <ProgressBar
                 android:id="@+id/pb_reviews_loading_indicator"
-                android:layout_height="42dp"
-                android:layout_width="42dp"
-                android:layout_gravity="center"
-                android:visibility="invisible" />
+                style="@style/progress_bar_style" />
         </FrameLayout>
 
     </LinearLayout>
