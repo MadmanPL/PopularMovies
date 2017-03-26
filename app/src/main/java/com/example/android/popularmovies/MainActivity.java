@@ -33,8 +33,10 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
+    private static final String FIRST_VISIBLE_POSITION = "FIRST_VISIBLE_POSITION";
     private static final String SORT_TYPE = "SORT_TYPE";
     private String m_sSortType = "POPULAR";
+    private int m_iFirstVisiblePosition = -1;
 
 
     private RecyclerView m_rvMovies;
@@ -72,6 +74,8 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         m_sSortType = "POPULAR";
         if (savedInstanceState != null) {
             m_sSortType = savedInstanceState.getString(SORT_TYPE);
+            m_iFirstVisiblePosition = savedInstanceState.getInt(FIRST_VISIBLE_POSITION);
+
         }
         if (m_sSortType == "POPULAR") {
             loadMoviesData(TheMovieDatabaseUtils.SortType.POPULAR);
@@ -85,6 +89,11 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     @Override
     protected void onSaveInstanceState(Bundle state) {
         state.putString(SORT_TYPE, m_sSortType);
+
+        View firstChild = m_rvMovies.getChildAt(0);
+        int firstVisiblePosition = m_rvMovies.getChildAdapterPosition(firstChild);
+
+        state.putInt(FIRST_VISIBLE_POSITION, firstVisiblePosition);
 
         super.onSaveInstanceState(state);
     }
@@ -245,6 +254,9 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
             if (moviesData != null) {
                 showMoviesDataView();
                 m_moviesAdapter.setMoviesData(moviesData);
+                if (m_iFirstVisiblePosition > 0) {
+                    m_rvMovies.scrollToPosition(m_iFirstVisiblePosition);
+                }
             } else {
                 showErrorMessage();
             }

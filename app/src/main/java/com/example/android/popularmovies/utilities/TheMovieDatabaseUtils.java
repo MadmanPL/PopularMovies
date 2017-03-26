@@ -16,7 +16,7 @@ import java.util.Scanner;
  * Created by Integra on 2017-01-26.
  */
 
-public class TheMovieDatabaseUtils {
+public final class TheMovieDatabaseUtils {
     private static final String TAG = TheMovieDatabaseUtils.class.getSimpleName();
 
     private static final String STATIC_URL = "https://api.themoviedb.org/3";
@@ -30,10 +30,11 @@ public class TheMovieDatabaseUtils {
     private static final String STATIC_IMAGE_URL = "http://image.tmdb.org/t/p/";
     private static final String STATIC_IMAGE_PATH_SIZE = "w185";
 
-
     public enum SortType {
         POPULAR, TOP_RATED, FAVORITE
     }
+
+    private TheMovieDatabaseUtils(){}
 
     public static URL buildUrl(SortType sortType) {
         Uri.Builder builder = Uri.parse(STATIC_URL).buildUpon();
@@ -51,6 +52,7 @@ public class TheMovieDatabaseUtils {
             url = new URL(builtUri.toString());
         } catch (MalformedURLException e) {
             e.printStackTrace();
+            Log.e(TAG, e.getMessage(), e);
         }
 
         Log.v(TAG, "Built URI " + url);
@@ -72,6 +74,7 @@ public class TheMovieDatabaseUtils {
             url = new URL(builtUri.toString());
         } catch (MalformedURLException e) {
             e.printStackTrace();
+            Log.e(TAG, e.getMessage(), e);
         }
 
         Log.v(TAG, "Built URI " + url);
@@ -93,6 +96,7 @@ public class TheMovieDatabaseUtils {
             url = new URL(builtUri.toString());
         } catch (MalformedURLException e) {
             e.printStackTrace();
+            Log.e(TAG, e.getMessage(), e);
         }
 
         Log.v(TAG, "Built URI " + url);
@@ -112,6 +116,7 @@ public class TheMovieDatabaseUtils {
             url = new URL(builtUri.toString());
         } catch (MalformedURLException e) {
             e.printStackTrace();
+            Log.e(TAG, e.getMessage(), e);
         }
 
         Log.v(TAG, "Built URI " + url);
